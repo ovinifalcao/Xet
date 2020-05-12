@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Linq;
 using CommunicationModels;
+using Newtonsoft.Json;
 
 namespace ServerSide
 {
@@ -17,7 +18,7 @@ namespace ServerSide
 
         //Isso aqui poderia ser um dicionário?
         public static Dictionary<TcpClient, string> ConnectionsInfo = new Dictionary<TcpClient, string>();
-
+        public static Dictionary<TcpClient, string> GroupsInfo = new Dictionary<TcpClient, string>();
 
         private IPAddress ipAdress;
         private TcpClient tcpClient;
@@ -29,6 +30,34 @@ namespace ServerSide
         public static event StatusChangedEventHandler StatusChanged;
         private static StatusChangedEventArgs e;
         // #
+
+        public void SetServerOnline()
+        {
+            try
+            {
+                IPAddress ipaLocal = 25;
+                tcpClientListener = new TcpListener(ipaLocal, 2502);
+                tcpClientListener.Start();
+
+                ServRodando = true;
+                listenerProcess = new Thread(KeepRunning);
+                listenerProcess.Start();
+                Console.WriteLine("Sucess: The Server is online");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: SendingMessage - " + ex.ToString());
+            }
+        }
+
+        private void KeepRunning()
+        {
+            while (ServRodando == true)
+            {
+                tcpClient = tcpClientListener.AcceptTcpClient();
+                Connection newConnection = new Connection(tcpClient);
+            }
+        }
 
         public static void AddUser(TcpClient tcpUser, string userName)
         {
@@ -57,74 +86,72 @@ namespace ServerSide
             }
         }
 
-
-        public static void EnviaMensagemAdmin(string Mensagem)
+        public static void SenderActionRouter(string message)
         {
-            StreamWriter swSenderSender;
-
-            // Não vamos ficar printando nada no console
-            e = new StatusChangedEventArgs("Administrador: " + Mensagem);
-            OnStatusChanged(e);
-            //#
-
-            //Aqui a gente vai ter que fazer uma pequena mágica de encapsulamento
-            //pra mandar a mensagem só para quem se espera e não para todo mundo
-
-
-            // Cria um array de clientes TCPs do tamanho do numero de clientes existentes
-            TcpClient[] tcpClientes = new TcpClient[ChatServidor.htUsuarios.Count];
-            // Copia os objetos TcpClient no array
-            ChatServidor.htUsuarios.Values.CopyTo(tcpClientes, 0);
-            // Percorre a lista de clientes TCP
-            for (int i = 0; i < tcpClientes.Length; i++)
+            try
             {
-                // Tenta enviar uma mensagem para cada cliente
-                try
+                ComnModel MessageObj = BuildModel(message);
+
+                if ((int)MessageObj.ContentAction > 2)
                 {
-                    // Se a mensagem estiver em branco ou a conexão for nula sai...
-                    if (Mensagem.Trim() == "" || tcpClientes[i] == null)
-                    {
-                        continue;
-                    }
-                    // Envia a mensagem para o usuário atual no laço
-                    swSenderSender = new StreamWriter(tcpClientes[i].GetStream());
-                    swSenderSender.WriteLine("Administrador: " + Mensagem);
-                    swSenderSender.Flush();
-                    swSenderSender = null;
+                    SendMessageToASingleAddresee(MessageObj);
                 }
-                catch // Se houver um problema , o usuário não existe , então remove-o
+                else if ((int)MessageObj.ContentAction > 4)
                 {
-                    RemoveUsuario(tcpClientes[i]);
+                    UseMessageAsSettings(MessageObj);
                 }
+                else
+                {
+                    SendMesseToAGroup(MessageObj);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error: SendingMessage - " + ex.ToString());
+            }  
+        }
+
+        public static ComnModel BuildModel(string Message)
+        {
+           return JsonConvert.DeserializeObject<ComnModel>(Message);
+        }
+
+        private static void SendMessageToASingleAddresee(ComnModel messageObj)
+        {
+            WriteMessageOnStream
+                (ConnectionsInfo.FirstOrDefault(C => C.Value == messageObj.Addresee).Key,
+                ((ContentSendMessage)messageObj.Content).Message);
+        }
+
+        private static void UseMessageAsSettings(ComnModel messageObj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void SendMesseToAGroup(ComnModel messageObj)
+        {
+            var tcpOnGroup = (from t in GroupsInfo
+                              where t.Value == messageObj.Addresee
+                              select t.Key).ToList();
+
+            foreach (TcpClient client in tcpOnGroup)
+            {
+                WriteMessageOnStream(client, JsonConvert.SerializeObject(messageObj));
             }
         }
 
-        public static MessageAddressee GetAddressee(string Message)
+        public static void WriteMessageOnStream(TcpClient tcpClient, string message)
         {
-            var messageData = new MessageAddressee();
-            int stopPoint = Message.IndexOf(';');
-
-            var addresseeUsersNames =  Message.Substring(0, stopPoint -1);
-            foreach (string UsName in addresseeUsersNames.Split(','))
+            using (var swSenderSender = new StreamWriter(tcpClient.GetStream()))
             {
-                messageData.tcp.Add(ChatServer.ConnectionsInfo.FirstOrDefault(t => t.Value == addresseeUsersNames).Key);
+                swSenderSender.WriteLine(message);
+                swSenderSender.Flush();
             }
-
-            var senderDateTime = Message.Substring(stopPoint, 14).Split(',');
-            messageData.SendMoment = new DateTime
-                (
-                 int.Parse(senderDateTime[0]),
-                 int.Parse(senderDateTime[1]),
-                 int.Parse(senderDateTime[2]),
-                 int.Parse(senderDateTime[3]),
-                 int.Parse(senderDateTime[4]),
-                 int.Parse(senderDateTime[5])
-                );
-
-            messageData.Message = Message.Substring(addresseeUsersNames.Length + 15);
-
-            return messageData;
         }
+
+
+
+
 
     }
 }

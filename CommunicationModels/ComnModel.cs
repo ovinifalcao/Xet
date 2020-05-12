@@ -8,7 +8,11 @@ namespace CommunicationModels
         {
             SendText = 1,
             SendImage = 2,
-            SetGroup = 3
+            SendTextGroup = 3,
+            SendImageGroup = 4,
+            SetGroup = 5,
+            SendError = 6,
+            SendConnectionSuccessful = 7
         }
 
         public Actions ContentAction { get; set; }
