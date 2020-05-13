@@ -1,5 +1,5 @@
 ﻿
-namespace CommunicationModels
+namespace SharedCommunication
 {
     class ContentSendImage : ContentModel
     {

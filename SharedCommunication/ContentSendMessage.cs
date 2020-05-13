@@ -1,4 +1,4 @@
-﻿namespace CommunicationModels
+﻿namespace SharedCommunication
 {
     public class ContentSendMessage : ContentModel
     {

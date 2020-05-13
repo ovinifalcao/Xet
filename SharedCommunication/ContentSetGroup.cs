@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CommunicationModels
+namespace SharedCommunication
 {
     public class ContentSetGroup : ContentModel
     {

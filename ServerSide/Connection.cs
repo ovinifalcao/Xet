@@ -4,7 +4,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using CommunicationModels;
+using SharedCommunication;
 using Newtonsoft.Json;
 
 namespace ServerSide
@@ -41,7 +41,7 @@ namespace ServerSide
             };
 
             if (!string.IsNullOrEmpty(CurrentUser) &&
-                ChatServer.ConnectionsInfo.ContainsValue(CurrentUser) == false)
+                ChatServer.DicOfConnections.ContainsValue(CurrentUser) == false)
             {
                 ChatServer.WriteMessageOnStream(
                     tcpClient, JsonConvert.SerializeObject(objMsg));

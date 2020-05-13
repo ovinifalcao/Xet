@@ -1,0 +1,35 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ClientApp.Icons">
+    
+    <Canvas x:Key="Clip" Name="Layer_1" Width="128" Height="128">
+        <Canvas.RenderTransform>
+            <TranslateTransform X="0" Y="0"/>
+        </Canvas.RenderTransform>
+        <Canvas.Resources/>
+
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path2" Fill="#000000">
+            <Path.Data>
+                <PathGeometry Figures="M41.789 113.963c-6.363 0-12.727-2.422-17.57-7.266c-9.688-9.689-9.688-25.453 0.001-35.14l52.091-52.089  c3.407-3.408 7.934-5.284 12.746-5.284s9.34 1.876 12.747 5.284l0.082 0.085c3.361 3.359 5.238 7.886 5.238 12.699  c0 4.813-1.877 9.34-5.285 12.747L53.8 93.036l-0.646 0.579c-3.891 3.84-10.179 3.824-14.048-0.042l-0.077-0.077  c-1.879-1.879-2.916-4.381-2.916-7.042c0-2.659 1.038-5.161 2.921-7.044l24.965-24.964c0.781-0.781 2.047-0.781 2.828 0  c0.781 0.781 0.781 2.047 0 2.828L41.862 82.238c-1.128 1.129-1.749 2.625-1.749 4.217c0 1.591 0.621 3.088 1.749 4.217l0.077 0.078  c2.319 2.318 6.103 2.316 8.428-0.006l48.644-48.573c2.652-2.652 4.113-6.175 4.113-9.919s-1.461-7.267-4.113-9.918l-0.082-0.086  c-2.605-2.604-6.128-4.064-9.872-4.064s-7.267 1.46-9.918 4.112L27.048 74.386c-8.129 8.128-8.129 21.354-0.001 29.483  c8.127 8.126 21.354 8.129 29.484 0l52.088-52.091c0.781-0.781 2.047-0.781 2.828 0c0.781 0.781 0.781 2.047 0 2.828l-52.088 52.091  C54.515 111.541 48.151 113.963 41.789 113.963z" FillRule="NonZero"/>
+            </Path.Data>
+        </Path>
+    </Canvas>
+
+    <Canvas x:Key="Send" Name="Layer_2" Width="128" Height="128">
+        <Canvas.RenderTransform>
+            <TranslateTransform X="0" Y="0"/>
+        </Canvas.RenderTransform>
+        <Canvas.Resources/>
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path3" Fill="#000000">
+            <Path.Data>
+                <PathGeometry Figures="M74.508 108.239c-0.772 0-1.479-0.445-1.81-1.148l-16.863-35.84L20.732 55.116c-0.734-0.337-1.193-1.083-1.164-1.891  c0.03-0.808 0.543-1.518 1.3-1.8l83.312-31.107c0.729-0.271 1.552-0.096 2.105 0.452c0.555 0.548 0.739 1.369 0.475 2.102  l-30.371 84.047c-0.274 0.761-0.98 1.28-1.788 1.318C74.569 108.238 74.538 108.239 74.508 108.239z M26.772 53.49l31.396 14.432  c0.429 0.197 0.774 0.539 0.975 0.965l15.122 32.139l27.264-75.448L26.772 53.49z" FillRule="NonZero"/>
+            </Path.Data>
+        </Path>
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path4" Fill="#000000">
+            <Path.Data>
+                <PathGeometry Figures="M57.334 71.738c-0.512 0-1.023-0.195-1.414-0.586c-0.781-0.78-0.781-2.047 0-2.828l47.545-47.546  c0.781-0.781 2.047-0.781 2.828 0c0.781 0.781 0.781 2.047 0 2.828L58.748 71.152C58.357 71.543 57.846 71.738 57.334 71.738z" FillRule="NonZero"/>
+            </Path.Data>
+        </Path>
+    </Canvas>
+
+</ResourceDictionary>

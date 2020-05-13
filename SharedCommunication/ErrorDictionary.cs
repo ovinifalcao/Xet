@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommunicationModels
+namespace SharedCommunication
 {
     public class ErrorDictionary
     {

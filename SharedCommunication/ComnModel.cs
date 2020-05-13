@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommunicationModels
+namespace SharedCommunication
 {
     public class ComnModel
     {
@@ -12,7 +12,8 @@ namespace CommunicationModels
             SendImageGroup = 4,
             SetGroup = 5,
             SendError = 6,
-            SendConnectionSuccessful = 7
+            SendConnectionSuccessful = 7,
+            SendConnectionResquest = 8
         }
 
         public Actions ContentAction { get; set; }
