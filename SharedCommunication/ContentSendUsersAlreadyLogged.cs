@@ -4,8 +4,8 @@ using System.Text;
 
 namespace SharedCommunication
 {
-    public class ContentSendError 
+    public class ContentSendUsersAlreadyLogged
     {
-        public int errorCod { get; set; }
+        public List<string> AlreadyLoggedUsers { get; set; }
     }
 }

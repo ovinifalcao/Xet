@@ -1,7 +1,7 @@
 ﻿
 namespace SharedCommunication
 {
-    class ContentSendImage : ContentModel
+    class ContentSendImage 
     {
         public byte[] ByteImage { get; set; }
     }

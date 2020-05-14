@@ -4,9 +4,9 @@ using System.Text;
 
 namespace SharedCommunication
 {
-    public class ContentSendConnectionResquest
-    { 
-        public string UserName { get; set; }
+    public class ContentSendConnectionSuccessful
+    {
+        public string AceptedUserName { get; set; }
         public Byte[] UserPhoto { get; set; }
     }
 }

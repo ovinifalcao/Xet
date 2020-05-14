@@ -12,8 +12,8 @@ namespace ServerSide
 {
     class ChatServer
     {
-        public static Dictionary<TcpClient, string> DicOfConnections = new Dictionary<TcpClient, string>();
-        public static Dictionary<TcpClient, string> DicOfGroups = new Dictionary<TcpClient, string>();
+        public static Dictionary<string, TcpClient> DicOfConnections = new Dictionary<string, TcpClient>();
+        public static Dictionary<string, TcpClient> DicOfGroups = new Dictionary<string, TcpClient>();
 
         private Thread listenerProcess;
         private TcpListener tcpClientListener;
@@ -49,38 +49,68 @@ namespace ServerSide
 
         public static void AddUser(TcpClient tcpUser, string userName)
         {
-            ChatServer.DicOfConnections.Add(tcpUser, userName);
-            //TODO: CRIAR UMA FORMA DE MOSTRAR SISTEMATICAMENTE QUE ALGUÉM CHEGOU
+            var UsersBeforeAdding = DicOfConnections.ToList();
+            ChatServer.DicOfConnections.Add(userName, tcpUser);
+
+            foreach (KeyValuePair<string, TcpClient> Dic in UsersBeforeAdding)
+            {
+                WriteMessageOnStream(Dic.Value,
+                    JsonConvert.SerializeObject(new ComnModel()
+                    {
+                        Addresee = Dic.Key,
+                        ContentAction = ComnModel.Actions.SendNewUSerConneted,
+                        Moment = DateTime.Now,
+                        Content = JsonConvert.SerializeObject(
+                            new ContentSendNewUserConnected()
+                            {
+                                UserAddedName = userName,
+                                UserAddedPhoto = null
+                            })
+                    }));
+            }
+
+            WriteMessageOnStream(tcpUser,
+                JsonConvert.SerializeObject(new ComnModel()
+                {
+                    Addresee = null,
+                    ContentAction = ComnModel.Actions.SendUsersAlreadyLogged,
+                    Moment = DateTime.Now,
+                    Content = JsonConvert.SerializeObject(
+                            new ContentSendUsersAlreadyLogged()
+                            {
+                                AlreadyLoggedUsers =
+                                    (from us in UsersBeforeAdding
+                                     select us.Key).ToList()
+                            })
+                }));
         }
 
-        public static void RemoveUser(TcpClient tcpUser)
+        public static void RemoveUser(ComnModel request)
         {
-            if (DicOfConnections[tcpUser] != null)
+            var LoggofInfo = JsonConvert.DeserializeObject<ContentSendUserIsDisconnecting>(request.Content);
+
+            if (DicOfConnections[LoggofInfo.Client] != null)
             {
-                //TODO: CRIAR UMA FORMA DE MOSTRAR SISTEMATICAMENTE QUE ALGUÉM SAIU
-                DicOfConnections.Remove(tcpUser);
+                DicOfConnections.Remove(LoggofInfo.Client);
+            }
+
+            foreach (KeyValuePair<string, TcpClient> Kvp in DicOfConnections)
+            {
+                WriteMessageOnStream(Kvp.Value, JsonConvert.SerializeObject(request));
             }
         }
-
 
 
         public static void SenderActionRouter(string message)
         {
             try
             {
-                ComnModel MessageObj = BuildModel(message);
-
-                if ((int)MessageObj.ContentAction > 2)
+                ComnModel MessageObj = JsonConvert.DeserializeObject<ComnModel>(message);
+                switch (MessageObj.ContentAction)
                 {
-                    SendMessageToASingleAddresee(MessageObj);
-                }
-                else if ((int)MessageObj.ContentAction > 4)
-                {
-                    UseMessageAsSettings(MessageObj);
-                }
-                else
-                {
-                    SendMesseToAGroup(MessageObj);
+                    case ComnModel.Actions.SendUserIsDisconnecting:
+                        RemoveUser(MessageObj);
+                        break;
                 }
             }
             catch(Exception ex)
@@ -89,16 +119,12 @@ namespace ServerSide
             }  
         }
 
-        public static ComnModel BuildModel(string Message)
-        {
-           return JsonConvert.DeserializeObject<ComnModel>(Message);
-        }
 
         private static void SendMessageToASingleAddresee(ComnModel messageObj)
         {
             WriteMessageOnStream
-                (DicOfConnections.FirstOrDefault(C => C.Value == messageObj.Addresee).Key,
-                ((ContentSendMessage)messageObj.Content).Message);
+                (DicOfConnections[messageObj.Addresee],
+                JsonConvert.SerializeObject(messageObj));
         }
 
         private static void UseMessageAsSettings(ComnModel messageObj)
@@ -109,8 +135,8 @@ namespace ServerSide
         private static void SendMesseToAGroup(ComnModel messageObj)
         {
             var tcpOnGroup = (from t in DicOfGroups
-                              where t.Value == messageObj.Addresee
-                              select t.Key).ToList();
+                              where t.Key == messageObj.Addresee
+                              select t.Value).ToList();
 
             foreach (TcpClient client in tcpOnGroup)
             {
@@ -120,11 +146,9 @@ namespace ServerSide
 
         public static void WriteMessageOnStream(TcpClient tcpClient, string message)
         {
-            using (var swSenderSender = new StreamWriter(tcpClient.GetStream()))
-            {
-                swSenderSender.WriteLine(message);
-                swSenderSender.Flush();
-            }
+            var swSenderSender = new StreamWriter(tcpClient.GetStream());
+            swSenderSender.WriteLine(message);
+            swSenderSender.Flush();
         }
 
     }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Xet" Height="450" Width="800">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -49,11 +49,11 @@
                         <ImageBrush ImageSource="C:\\Users\\Vinícius\\Desktop\\Recibos 99\\me.jpg"/>
                     </Ellipse.Fill>
                 </Ellipse>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontFamily="Segoe UI Light" FontSize="14">Vinícius Falcão</TextBlock>
+                <TextBlock Name="txbUserName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontFamily="Segoe UI Light" FontSize="14">Vinícius Falcão</TextBlock>
             </DockPanel>
             <TextBlock DockPanel.Dock="Top" TextAlignment="Center" Margin="0,5,0,0" FontFamily="Segoe UI Semilight" Foreground="#36FFFFFF">Contatos</TextBlock>
-            <StackPanel>
-                <local:ConctactCard/>
+            <StackPanel Name="pnContactCard">
+
             </StackPanel>
         </DockPanel>
 

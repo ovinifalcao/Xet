@@ -1,6 +1,6 @@
 ﻿namespace SharedCommunication
 {
-    public class ContentSendMessage : ContentModel
+    public class ContentSendMessage 
     {
         public string Message { get; set; }
     }

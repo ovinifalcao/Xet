@@ -15,7 +15,6 @@ namespace ServerSide
         private Thread thrSender;
         private StreamReader streamReciver;
         private StreamWriter streamSender;
-        private string CurrentUser;
         private string Resquest;
 
         public Connection(TcpClient tcpCon)
@@ -30,30 +29,38 @@ namespace ServerSide
             streamReciver = new StreamReader(tcpClient.GetStream());
             streamSender = new StreamWriter(tcpClient.GetStream());
 
-            CurrentUser = streamReciver.ReadLine();
+            var UserMessage = streamReciver.ReadLine();
+            var objRecivedMessage = JsonConvert.DeserializeObject<ComnModel>(UserMessage);
+            var objRecivedContent = JsonConvert.DeserializeObject<ContentSendConnectionResquest>(objRecivedMessage.Content);
 
-            var objMsg = new ComnModel()
+            var objMessageToSend = new ComnModel()
             {
                 Moment = DateTime.Now,
-                Addresee = CurrentUser,
                 ContentAction = ComnModel.Actions.SendConnectionSuccessful,
-                Content = null
+                Content = JsonConvert.SerializeObject(
+                    new ContentSendConnectionSuccessful()
+                    {
+                        AceptedUserName = objRecivedContent.UserName,
+                        UserPhoto = objRecivedContent.UserPhoto
+                    })
             };
 
-            if (!string.IsNullOrEmpty(CurrentUser) &&
-                ChatServer.DicOfConnections.ContainsValue(CurrentUser) == false)
+            if (!string.IsNullOrEmpty(UserMessage) &&
+                ChatServer.DicOfConnections.ContainsValue(UserMessage) == false)
             {
+                ChatServer.AddUser(tcpClient, objRecivedContent.UserName);
                 ChatServer.WriteMessageOnStream(
-                    tcpClient, JsonConvert.SerializeObject(objMsg));
+                    tcpClient, JsonConvert.SerializeObject(objMessageToSend));
                 WaitForMessege();
             }
             else
             {
-                objMsg.ContentAction = ComnModel.Actions.SendError;
-                objMsg.Content = new ContentSendError() { errorCod = 601 };
+
+                objMessageToSend.ContentAction = ComnModel.Actions.SendError;
+                objMessageToSend.Content = JsonConvert.SerializeObject( new ContentSendError() { errorCod = 601 });
               
                 ChatServer.WriteMessageOnStream(
-                    tcpClient, JsonConvert.SerializeObject(objMsg));
+                    tcpClient, JsonConvert.SerializeObject(objMessageToSend));
 
                 CloseConnection();
             }

@@ -16,7 +16,7 @@ namespace ServerSide
             ChatServer mainServer = new ChatServer();
             Console.WriteLine("Type the IP adress: ");
             IPAddress enderecoIP = IPAddress.Parse(Console.ReadLine());
-            mainServer.SetServerOnline(IPAddress.Parse(Console.ReadLine()));
+            mainServer.SetServerOnline(enderecoIP);
         }
 
         static void OnClosing()
