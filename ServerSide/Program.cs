@@ -10,9 +10,7 @@ namespace ServerSide
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(@"//////////// Initalizing Server \\\\\\\\\\\");
-            Console.WriteLine();
-            Console.WriteLine();
+            Console.WriteLine("Initalizing Server");
             ChatServer mainServer = new ChatServer();
             Console.WriteLine("Type the IP adress: ");
             IPAddress enderecoIP = IPAddress.Parse(Console.ReadLine());

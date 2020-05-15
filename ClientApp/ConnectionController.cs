@@ -35,6 +35,9 @@ namespace ClientApp
                 isConnected = true;
                 this.UserName = userName;
 
+                WdMensseger.Controller = this;
+                WdMensseger.Closed += WdMensseger_Closed;
+
                 SendMessege(new ComnModel()
                 {
                     ContentAction = ComnModel.Actions.SendConnectionResquest,
@@ -49,7 +52,6 @@ namespace ClientApp
 
                 messageThread = new Thread(new ThreadStart(ReciveMensagens));
                 messageThread.Start();
-                WdMensseger.Closed += WdMensseger_Closed;
                 WdMensseger.Show();
             }
             catch (Exception ex)
@@ -60,6 +62,7 @@ namespace ClientApp
 
         private void WdMensseger_Closed(object sender, EventArgs e)
         {
+            isConnected = false;
             SendMessege(
                 new ComnModel()
                 {
@@ -73,11 +76,9 @@ namespace ClientApp
                         })
                 });
 
-            isConnected = false;
+            messageThread.Join();
             streamSender.Close();
-            streamReciver.Close();
-            tcpServer.Close();
-            App.Current.Shutdown();
+            CloseConnection();
         }
 
         public void SendMessege(ComnModel Message)
@@ -85,7 +86,6 @@ namespace ClientApp
             streamSender = new StreamWriter(tcpServer.GetStream());
             streamSender.WriteLine(JsonConvert.SerializeObject(Message));
             streamSender.Flush();
-
         }
 
         private void ReciveMensagens()
@@ -95,18 +95,20 @@ namespace ClientApp
 
             while (isConnected)
             {
-                MessageRouter(streamReciver.ReadLine());
-            }
+                string msg = streamReciver.ReadLine();
+                if(! string.IsNullOrEmpty(msg))
+                    MessageRouter(msg);
+            }  
         }
 
-        private void MessageRouter(string message)
+        public void MessageRouter(string message)
         {
             var objComm = JsonConvert.DeserializeObject<ComnModel>(message);
 
             switch (objComm.ContentAction)
             {
                 case ComnModel.Actions.SendText:
-                    //atualizar o form Pai com uma nova mensagem
+                    WdMensseger.Dispatcher.Invoke(new ActionBetweenThreads(WdMensseger.UpdateReceivedMessages), (new List<object>() { objComm }).ToArray());
 
                     break;
 
@@ -141,6 +143,12 @@ namespace ClientApp
             }
         }
 
+        private void CloseConnection()
+        {
+            streamReciver.Close();
+            tcpServer.Close();
+            App.Current.Shutdown();
+        }
 
     }
 }

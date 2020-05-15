@@ -16,12 +16,25 @@ namespace ClientApp
 {
     public partial class ConctactCard : UserControl
     {
-        public Models.Contact ContactInfo { get; set; }
-        public List<Tuple<string, DateTime>> Conversation { get; set; }
+        public enum ConversationSide
+        {
+            host = 0,
+            Contact = 1
+        }
+
+        public List<Tuple<string, DateTime, ConversationSide>> Conversation { get; set; }
 
         public ConctactCard()
         {
             InitializeComponent();
+            Conversation = new List<Tuple<string, DateTime, ConversationSide>>();
+        }
+
+        internal void UpdateBrief(string briefMsg)
+        {
+            var msgContenCount = briefMsg.Count();
+            if (msgContenCount > 30) msgContenCount = 30;
+            txbBriefMsg.Text = briefMsg.Substring(0, msgContenCount) + "...";
         }
     }
 }

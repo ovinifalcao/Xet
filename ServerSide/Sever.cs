@@ -19,6 +19,8 @@ namespace ServerSide
         private TcpListener tcpClientListener;
         private bool IsSeverRunning = false;
 
+
+
         public void SetServerOnline(IPAddress ipAdress)
         {
             try
@@ -89,17 +91,19 @@ namespace ServerSide
         {
             var LoggofInfo = JsonConvert.DeserializeObject<ContentSendUserIsDisconnecting>(request.Content);
 
+            var tcp = DicOfConnections[LoggofInfo.Client];
             if (DicOfConnections[LoggofInfo.Client] != null)
             {
                 DicOfConnections.Remove(LoggofInfo.Client);
+                WriteMessageOnStream(tcp, "");
             }
 
             foreach (KeyValuePair<string, TcpClient> Kvp in DicOfConnections)
             {
                 WriteMessageOnStream(Kvp.Value, JsonConvert.SerializeObject(request));
             }
+ 
         }
-
 
         public static void SenderActionRouter(string message)
         {
@@ -108,8 +112,16 @@ namespace ServerSide
                 ComnModel MessageObj = JsonConvert.DeserializeObject<ComnModel>(message);
                 switch (MessageObj.ContentAction)
                 {
+                    case ComnModel.Actions.SendText:
+                        SendMessegeToTheAddressee(MessageObj);
+                        break;
+
                     case ComnModel.Actions.SendUserIsDisconnecting:
                         RemoveUser(MessageObj);
+                        break;
+
+                    default:
+                        Console.WriteLine("Nada pra fazer");
                         break;
                 }
             }
@@ -119,13 +131,14 @@ namespace ServerSide
             }  
         }
 
-
-        private static void SendMessageToASingleAddresee(ComnModel messageObj)
+        private static void SendMessegeToTheAddressee(ComnModel messageObj)
         {
             WriteMessageOnStream
                 (DicOfConnections[messageObj.Addresee],
                 JsonConvert.SerializeObject(messageObj));
         }
+
+
 
         private static void UseMessageAsSettings(ComnModel messageObj)
         {

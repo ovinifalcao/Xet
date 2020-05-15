@@ -15,7 +15,6 @@ namespace ServerSide
         private Thread thrSender;
         private StreamReader streamReciver;
         private StreamWriter streamSender;
-        private string Resquest;
 
         public Connection(TcpClient tcpCon)
         {
@@ -46,7 +45,7 @@ namespace ServerSide
             };
 
             if (!string.IsNullOrEmpty(UserMessage) &&
-                ChatServer.DicOfConnections.ContainsValue(UserMessage) == false)
+                ChatServer.DicOfConnections.ContainsKey(UserMessage) == false)
             {
                 ChatServer.AddUser(tcpClient, objRecivedContent.UserName);
                 ChatServer.WriteMessageOnStream(
@@ -77,16 +76,23 @@ namespace ServerSide
         {
             try
             {
-                Resquest = streamReciver.ReadLine();
-                while (!string.IsNullOrEmpty(Resquest))
+                string StreamImput;
+                while ((StreamImput = streamReciver.ReadLine()) != "")
                 {
-                    ChatServer.SenderActionRouter(Resquest);
+                    if (StreamImput != null)
+                    {
+                        ChatServer.SenderActionRouter(StreamImput);
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
+                CloseConnection();
             }
             catch(Exception ex)
             {
                 Console.WriteLine("Error - Waiting for messages: " + ex.ToString());
-                //remover usuário???
             }
         }
 
