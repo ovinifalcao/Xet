@@ -43,13 +43,12 @@
     <DockPanel>
 
         <DockPanel Name="ContactPanel" DockPanel.Dock="Left" Width="200" Background="#E5857568">
-            <DockPanel Height="50" DockPanel.Dock="Top" VerticalAlignment="Top" Background="#FF857568">
-                <Ellipse MaxWidth="50" Width="45" Height="45" HorizontalAlignment="Left" Margin="10,0,0,0" Stroke="#FFB6AAAA" >
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="C:\\Users\\Vinícius\\Desktop\\Recibos 99\\me.jpg"/>
-                    </Ellipse.Fill>
-                </Ellipse>
-                <TextBlock Name="txbUserName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontFamily="Segoe UI Light" FontSize="14">Vinícius Falcão</TextBlock>
+            <DockPanel Name="pnHostInfo" Height="50" DockPanel.Dock="Top" VerticalAlignment="Top" Background="#FF857568">
+
+                <Grid Name="pnProfileFrame" MaxWidth="50" Width="45" Height="45" HorizontalAlignment="Left" Margin="10,0,0,0">
+                    <Ellipse Name="elProfileHost"  Stroke="#FFB6AAAA" />
+                </Grid>
+                <TextBlock Name="txbUserName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontFamily="Segoe UI Light" FontSize="14">HostName...</TextBlock>
             </DockPanel>
             <TextBlock DockPanel.Dock="Top" TextAlignment="Center" Margin="0,5,0,0" FontFamily="Segoe UI Semilight" Foreground="#36FFFFFF">Contatos</TextBlock>
             <StackPanel Name="pnContactCard">
@@ -62,12 +61,9 @@
 
             <Grid Visibility="Hidden" Name="pnWindTop" Height="50" DockPanel.Dock="Top" Background="White">
                 <DockPanel  Height="50" DockPanel.Dock="Top" VerticalAlignment="Top" >
-                    <Ellipse MaxWidth="50" Width="40" Height="40" HorizontalAlignment="Left" Margin="10,0,0,0" Stroke="#FFB6AAAA" >
-                        <Ellipse.Fill>
-                            <ImageBrush x:Name="ContactWindPhoto" ImageSource="C:\\Users\\Vinícius\\Desktop\\Recibos 99\\me.jpg"/>
-                        </Ellipse.Fill>
-                    </Ellipse>
-                    <TextBlock Name="txbContactWindName" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FF918377" FontFamily="Segoe UI Light" FontSize="14" Margin="18,0,0,0">Vinícius Falcão</TextBlock>
+                    <Grid Name="pnIdentifyConversation" MaxWidth="50" Width="40" Height="40" HorizontalAlignment="Left" Margin="10,0,0,0" >
+                    </Grid>
+                    <TextBlock Name="txbContactWindName" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FF918377" FontFamily="Segoe UI Light" FontSize="14" Margin="18,0,0,0">GuestName</TextBlock>
                 </DockPanel>
             </Grid>
 

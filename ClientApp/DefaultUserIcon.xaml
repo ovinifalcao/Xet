@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="ClientApp.DefaultUserIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ClientApp"
+             mc:Ignorable="d" 
+             d:DesignHeight="45" d:DesignWidth="45" Width="50" Height="50">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/ClientApp;Component/Icons/InitializeComponent.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Border Name="vbUserPhoto" Background="#FFB4B4B4" CornerRadius="50"  Cursor="Hand" >
+            <Viewbox Margin="5" >
+                <ContentControl  Content="{StaticResource PhotoMissing}" BorderBrush="#FFAC4343" Background="#FF3C1212"></ContentControl>
+            </Viewbox>
+        </Border>
+    </Grid>
+</UserControl>

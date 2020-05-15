@@ -32,6 +32,7 @@ namespace ServerSide
             var objRecivedMessage = JsonConvert.DeserializeObject<ComnModel>(UserMessage);
             var objRecivedContent = JsonConvert.DeserializeObject<ContentSendConnectionResquest>(objRecivedMessage.Content);
 
+
             var objMessageToSend = new ComnModel()
             {
                 Moment = DateTime.Now,
@@ -47,7 +48,7 @@ namespace ServerSide
             if (!string.IsNullOrEmpty(UserMessage) &&
                 ChatServer.DicOfConnections.ContainsKey(UserMessage) == false)
             {
-                ChatServer.AddUser(tcpClient, objRecivedContent.UserName);
+                ChatServer.AddUser(tcpClient, objRecivedContent.UserName, objRecivedContent.UserPhoto);
                 ChatServer.WriteMessageOnStream(
                     tcpClient, JsonConvert.SerializeObject(objMessageToSend));
                 WaitForMessege();

@@ -6,6 +6,6 @@ namespace SharedCommunication
 {
     public class ContentSendUsersAlreadyLogged
     {
-        public List<string> AlreadyLoggedUsers { get; set; }
+        public List<Tuple<string, Byte[]>> AlreadyLoggedUsers { get; set; }
     }
 }

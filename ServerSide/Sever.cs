@@ -13,13 +13,12 @@ namespace ServerSide
     class ChatServer
     {
         public static Dictionary<string, TcpClient> DicOfConnections = new Dictionary<string, TcpClient>();
+        public static Dictionary<string, Byte[]> DicOfProfiles = new Dictionary<string, Byte[]>();
         public static Dictionary<string, TcpClient> DicOfGroups = new Dictionary<string, TcpClient>();
 
         private Thread listenerProcess;
         private TcpListener tcpClientListener;
         private bool IsSeverRunning = false;
-
-
 
         public void SetServerOnline(IPAddress ipAdress)
         {
@@ -49,12 +48,14 @@ namespace ServerSide
             }
         }
 
-        public static void AddUser(TcpClient tcpUser, string userName)
+        public static void AddUser(TcpClient tcpUser, string userName, Byte[] UserProfileImg)
         {
-            var UsersBeforeAdding = DicOfConnections.ToList();
+            var ConnectionsBeforeAdding = DicOfConnections.ToList();
+            var ProfilesBeforeAdding = DicOfProfiles.ToList();
             ChatServer.DicOfConnections.Add(userName, tcpUser);
+            ChatServer.DicOfProfiles.Add(userName, UserProfileImg);
 
-            foreach (KeyValuePair<string, TcpClient> Dic in UsersBeforeAdding)
+            foreach (KeyValuePair<string, TcpClient> Dic in ConnectionsBeforeAdding)
             {
                 WriteMessageOnStream(Dic.Value,
                     JsonConvert.SerializeObject(new ComnModel()
@@ -66,7 +67,7 @@ namespace ServerSide
                             new ContentSendNewUserConnected()
                             {
                                 UserAddedName = userName,
-                                UserAddedPhoto = null
+                                UserAddedPhoto = UserProfileImg
                             })
                     }));
             }
@@ -81,8 +82,8 @@ namespace ServerSide
                             new ContentSendUsersAlreadyLogged()
                             {
                                 AlreadyLoggedUsers =
-                                    (from us in UsersBeforeAdding
-                                     select us.Key).ToList()
+                                    (from us in ProfilesBeforeAdding.ToList()
+                                     select new Tuple<string, Byte[]>(us.Key, us.Value)).ToList()
                             })
                 }));
         }
@@ -95,6 +96,7 @@ namespace ServerSide
             if (DicOfConnections[LoggofInfo.Client] != null)
             {
                 DicOfConnections.Remove(LoggofInfo.Client);
+                DicOfProfiles.Remove(LoggofInfo.Client);
                 WriteMessageOnStream(tcp, "");
             }
 

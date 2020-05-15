@@ -33,8 +33,27 @@ namespace ClientApp
         }
 
         public void ChangeClientDisplayedName(ComnModel response)
-        {
-            txbUserName.Text = JsonConvert.DeserializeObject<ContentSendConnectionSuccessful>(response.Content).AceptedUserName;
+        { 
+            var AcceptedUserInfo = JsonConvert.DeserializeObject<ContentSendConnectionSuccessful>(response.Content);
+            txbUserName.Text = AcceptedUserInfo.AceptedUserName;
+
+            if (AcceptedUserInfo.UserPhoto != null)
+            {
+                elProfileHost.Fill = new ImageBrush
+                {
+                    ImageSource = FileOperations.RecoverImgFromArr(AcceptedUserInfo.UserPhoto)
+                };
+            }
+            else
+            {
+                pnProfileFrame.Children.Remove(elProfileHost);
+                
+                var DftImg = new DefaultUserIcon();
+                DftImg.HorizontalAlignment = HorizontalAlignment.Left;
+                Margin = new Thickness(10, 0, 0, 0);
+
+                pnProfileFrame.Children.Add(DftImg);
+            }
         }
 
         public void AddContactCardToThePanel(ComnModel response)
@@ -43,6 +62,7 @@ namespace ClientApp
             var Card = new ConctactCard();
             Card.PreviewMouseDown += ContactCard_Click;
             Card.txbContactName.Text = NewContactInfo.UserAddedName;
+            Card.UpdateContactPhoto(NewContactInfo.UserAddedPhoto);
             pnContactCard.Children.Add(Card);
 
         }
@@ -50,11 +70,12 @@ namespace ClientApp
         public void AddAlreadyLoggedContactCardToThePanel(ComnModel response)
         {
             var NewContactInfo = JsonConvert.DeserializeObject<ContentSendUsersAlreadyLogged>(response.Content);
-            foreach (string st in NewContactInfo.AlreadyLoggedUsers)
+            foreach (Tuple<string, Byte[]> st in NewContactInfo.AlreadyLoggedUsers)
             {
                 var Card = new ConctactCard();
                 Card.PreviewMouseDown += ContactCard_Click;
-                Card.txbContactName.Text = st;
+                Card.txbContactName.Text = st.Item1;
+                Card.UpdateContactPhoto(st.Item2);
                 pnContactCard.Children.Add(Card);
             }
         }
@@ -176,6 +197,24 @@ namespace ClientApp
 
             OpenedConversation.elNewMsgWarning.Visibility = Visibility.Hidden;
             txbContactWindName.Text = OpenedConversation.txbContactName.Text;
+            
+
+            pnIdentifyConversation.Children.Clear();
+            if (OpenedConversation.UserProfilePhoto == null)
+            {
+                pnIdentifyConversation.Children.Add(
+                    new ConctactCard());
+            }
+            else
+            {
+                pnIdentifyConversation.Children.Add(new Ellipse
+                {
+                    Fill = new ImageBrush
+                    {
+                        ImageSource = FileOperations.RecoverImgFromArr(OpenedConversation.UserProfilePhoto)
+                    }
+                });
+            }
 
         }
 

@@ -16,6 +16,8 @@ namespace ClientApp
 {
     public partial class ConctactCard : UserControl
     {
+        public Byte[] UserProfilePhoto { get; set; }
+
         public enum ConversationSide
         {
             host = 0,
@@ -35,6 +37,23 @@ namespace ClientApp
             var msgContenCount = briefMsg.Count();
             if (msgContenCount > 30) msgContenCount = 30;
             txbBriefMsg.Text = briefMsg.Substring(0, msgContenCount) + "...";
+        }
+
+        internal void UpdateContactPhoto(Byte[] ImgArr)
+        {
+            if (ImgArr != null)
+            {
+                UserProfilePhoto = ImgArr;
+                Ellipse elProfileHost = new Ellipse
+                {
+                    Fill = new ImageBrush
+                    {
+                        ImageSource = FileOperations.RecoverImgFromArr(UserProfilePhoto)
+                    }
+                };
+                pnProfilePhoto.Children.Clear();
+                pnProfilePhoto.Children.Add(elProfileHost);
+            }
         }
     }
 }

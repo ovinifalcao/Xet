@@ -6,9 +6,22 @@
         xmlns:local="clr-namespace:ClientApp"
         mc:Ignorable="d"
         Title="Bem-Vindo" Height="450" Width="300">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/ClientApp;Component/Icons/InitializeComponent.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+           
+        </ResourceDictionary>
+    </Window.Resources>
+
     <DockPanel Background="#E5857568">
-        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="150">
+
+        <Grid 
+            
+            VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="250">
             <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
@@ -17,11 +30,17 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" FontFamily="Segoe UI Light" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Nome de Usário:</TextBlock>
-            <TextBox Name="txbUserName" Grid.Row="1" ></TextBox>
-            <TextBlock Grid.Row="2" FontFamily="Segoe UI Light" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">IP do Servidor:</TextBlock>
-            <TextBox Name="txbIp" Grid.Row="3"></TextBox>
-            <Button Click="BtnConnect_Click" Name="BtnConnect" Grid.Row="5" Foreground="#E5857568">Entrar</Button>
+            <Border Name="vbUserPhoto" Background="#33ffffff" CornerRadius="50" Width="80" Height="80" Cursor="Hand"  MouseLeftButtonDown="Border_MouseLeftButtonDown" >
+                <Viewbox >
+                    <ContentControl  Content="{StaticResource PhotoRequired}" BorderBrush="#FFAC4343" Background="#FF3C1212"></ContentControl>
+                </Viewbox>
+            </Border>
+            
+            <TextBlock Grid.Row="1" FontFamily="Segoe UI Light" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Nome de Usário:</TextBlock>
+            <TextBox Name="txbUserName" Grid.Row="2" ></TextBox>
+            <TextBlock Grid.Row="3" FontFamily="Segoe UI Light" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">IP do Servidor:</TextBlock>
+            <TextBox Name="txbIp" Grid.Row="4"></TextBox>
+            <Button Click="BtnConnect_Click" Name="BtnConnect" Grid.Row="7" Foreground="#E5857568">Entrar</Button>
         </Grid>
     </DockPanel>
 </Window>

@@ -39,11 +39,9 @@
 
             <Ellipse Name="elNewMsgWarning" Width="8" Height="8" Margin="2" Fill="#FF891818" Visibility="Hidden"/>
 
-            <Ellipse Width="30" Height="30" HorizontalAlignment="Left"  >
-                <Ellipse.Fill>
-                    <ImageBrush x:Name="imgContactPhoto" ImageSource="C:\\Users\\Vinícius\\Desktop\\Recibos 99\\me.jpg"/>
-                </Ellipse.Fill>
-            </Ellipse>
+            <Grid Name="pnProfilePhoto" Width="30" Height="30">
+                <local:DefaultUserIcon Width="30" Height="30"/>
+            </Grid>
 
             <Grid VerticalAlignment="Center">
                 <Grid.RowDefinitions>
@@ -52,8 +50,8 @@
                 </Grid.RowDefinitions>
 
 
-                <TextBlock Name="txbContactName"  Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" FontFamily="Segoe UI Light" FontSize="11" Margin="8,0,0,0">Vinícius Falcão</TextBlock>
-                <TextBlock Name="txbBriefMsg" Grid.Row="1" MinWidth="150" MaxWidth="150" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#3BFFFFFF" FontSize="9" Margin="8,0,0,0">blablablabla blablablabla blala kkkkk...</TextBlock>
+                <TextBlock Name="txbContactName"  Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" FontFamily="Segoe UI Light" FontSize="11" Margin="8,0,0,0">Contact Name</TextBlock>
+                <TextBlock Name="txbBriefMsg" Grid.Row="1" MinWidth="150" MaxWidth="150" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#3BFFFFFF" FontSize="9" Margin="8,0,0,0"></TextBlock>
 
             </Grid> 
 

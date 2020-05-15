@@ -1,0 +1,47 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ClientApp.Icons">
+
+    <Canvas x:Key="PhotoRequired" Name="svg22" Width="13210.12" Height="13210.12">
+        <Canvas.RenderTransform>
+            <TranslateTransform X="0" Y="0"/>
+        </Canvas.RenderTransform>
+        <Canvas.Resources/>
+        <!--Unknown tag: metadata-->
+        <!--Unknown tag: sodipodi:namedview-->
+        <Canvas Name="Layer_x0020_1">
+            <!--Unknown tag: metadata-->
+            <Canvas Name="_2546138104624">
+                <Canvas Name="camera">
+                    <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path13" Fill="#fff">
+                        <Path.Data>
+                            <PathGeometry Figures="M6605.01 4998.58c-1092.34 0 -1977.56 885.21 -1977.56 1977.56 0 1092.07 885.22 1977.57 1977.56 1977.57 1092.07 0 1977.57 -885.41 1977.57 -1977.57 0 -1092.16 -885.5 -1977.56 -1977.57 -1977.56zm1125.99 2942.76c-532.91 621.94 -1469.05 693.88 -2090.99 160.69 -622.23 -532.9 -693.89 -1469.33 -160.69 -2090.99 532.72 -622.23 1469.04 -693.89 2090.99 -160.69 621.66 532.72 693.6 1469.33 160.69 2090.99z" FillRule="EvenOdd"/>
+                        </Path.Data>
+                    </Path>
+                    <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path15" Fill="#fff">
+                        <Path.Data>
+                            <PathGeometry Figures="M6605.01 5987.32c-546.08 0 -988.55 442.75 -988.74 988.55l0 0.47c0 68.01 55.41 123.6 123.6 123.6 68.21 0 123.6 -55.6 123.6 -123.6l-0.09 -0.47c0.28 -409.4 331.95 -741.34 741.62 -741.34 68.21 0 123.6 -55.41 123.6 -123.6 0 -68.21 -55.4 -123.6 -123.6 -123.6z" FillRule="EvenOdd"/>
+                        </Path.Data>
+                    </Path>
+                    <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path17" Fill="#fff">
+                        <Path.Data>
+                            <PathGeometry Figures="M9940.17 4761.46l-1071.32 -178.73 -339.43 -848.87c-113.51 -282.99 -383.89 -465.92 -688.46 -465.92l-2471.88 0c-304.58 0 -574.95 182.93 -688.65 466.2l-339.24 848.59 -1071.04 178.73c-359.41 59.6 -620.17 367.07 -620.17 731.25l0 3707.84c0 408.83 332.7 741.62 741.63 741.62l6426.93 0c408.83 0 741.62 -332.69 741.62 -741.62l-0.09 -3707.84c0 -364.17 -260.76 -671.64 -619.89 -731.25zm125.57 4439.09c0 136.69 -110.52 247.21 -247.21 247.21l-6427.03 0c-136.69 0 -247.21 -110.52 -247.21 -247.21l0 -3707.84c0 -120.89 87.54 -223.94 206.66 -243.75l1345.72 -224.23 442.75 -1106.92c37.84 -93.71 128.56 -155.46 229.65 -155.46l2471.88 0c100.9 0 191.62 61.57 229.36 155.46l442.75 1106.92 1346.01 224.23c119.12 19.81 206.66 122.86 206.66 243.75l0 3707.84z" FillRule="EvenOdd"/>
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+            </Canvas>
+        </Canvas>
+    </Canvas>
+
+    <Canvas x:Key="PhotoMissing" Name="svg12" Width="5367.7" Height="9809.53">
+        <Canvas.RenderTransform>
+            <TranslateTransform X="0" Y="0"/>
+        </Canvas.RenderTransform>
+        <Canvas.Resources/>
+        <Canvas Name="Layer_x0020_2">
+            <Polygon xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Points="692.63,2950.76 4916.6,0 3679.06,4537.16 5367.7,7911.81 811.29,8678.97 1780.62,5125.06 " Name="polygon7" FillRule="EvenOdd" Fill="#fff"/>
+            <Polygon xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Points="4767.05,6711.45 543.09,9662.21 1780.62,5125.06 91.97,1750.4 4648.38,983.25 3679.06,4537.16 " Name="polygon9" FillRule="EvenOdd" Fill="#E5857568"/>
+        </Canvas>
+    </Canvas>
+
+</ResourceDictionary>
