@@ -79,7 +79,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <RichTextBox Name="txbTypeMessege" Grid.Column="0"/>
+                <RichTextBox Name="txbTypeMessege" KeyUp="TxbTypeMessege_KeyDown" Grid.Column="0"/>
                 <Button Grid.Column="1" >
                     <Viewbox Name="ArrowBox" DockPanel.Dock="Right" HorizontalAlignment="Right"  Margin="7">
                         <ContentControl Content="{StaticResource Clip}"/>

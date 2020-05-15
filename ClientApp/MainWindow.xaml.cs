@@ -86,6 +86,7 @@ namespace ClientApp
                      ConctactCard.ConversationSide.Contact
                 ));
             CardOfSenderUser.UpdateBrief(TextContent.MessageContent);
+    
             CardOfSenderUser.elNewMsgWarning.Visibility = Visibility.Visible;
 
             if (OpenedConversation != null && CardOfSenderUser == OpenedConversation)
@@ -120,7 +121,12 @@ namespace ClientApp
 
         private void BtnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            var MessageContent = StringFromRichTextBox(txbTypeMessege).TrimEnd(new char[]{'\n', '\r'});
+            PerformSendMessage();
+        }
+
+        private void PerformSendMessage()
+        {
+            var MessageContent = StringFromRichTextBox(txbTypeMessege).TrimEnd(new char[] { '\n', '\r' });
             var Instant = DateTime.Now;
 
             OpenedConversation.Conversation.Add(
@@ -148,6 +154,7 @@ namespace ClientApp
                  {
                         OpenedConversation.Conversation.Last()
                  });
+            txbTypeMessege.Document.Blocks.Clear();
         }
 
         string StringFromRichTextBox(RichTextBox rtb)
@@ -156,12 +163,12 @@ namespace ClientApp
                 rtb.Document.ContentStart,
                 rtb.Document.ContentEnd
             );
-
             return textRange.Text;
         }
 
         public void ContactCard_Click(object sender, RoutedEventArgs e)
         {
+            pnMessagePlot.Children.Clear();
             OpenedConversation = (ConctactCard)sender;
             if (OpenedConversation.Conversation.Count > 0) { AddNewMsgsToPanel(OpenedConversation.Conversation); }
             if (pnWindTop.Visibility != Visibility.Visible) { pnWindTop.Visibility = Visibility.Visible; }
@@ -172,6 +179,12 @@ namespace ClientApp
 
         }
 
-
+        private void TxbTypeMessege_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                PerformSendMessage();
+            }
+        }
     }
 }
