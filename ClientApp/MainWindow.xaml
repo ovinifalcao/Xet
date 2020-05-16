@@ -11,6 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/ClientApp;Component/Icons/BaseLayout.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/ClientApp;Component/Styles/ScrollBarStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/ClientApp;Component/Icons/Emojis.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="Button">
@@ -69,8 +70,13 @@
 
             <Grid Visibility="Hidden" Name="pnWindTop" Height="50" DockPanel.Dock="Top" Background="White">
                 <DockPanel  Height="50" DockPanel.Dock="Top" VerticalAlignment="Top" >
-                    <Grid Name="pnIdentifyConversation" MaxWidth="50" Width="40" Height="40" HorizontalAlignment="Left" Margin="10,0,0,0" >
-                    </Grid>
+                    <Grid Name="pnIdentifyConversation" MaxWidth="50" Width="40" Height="40" HorizontalAlignment="Left" Margin="10,0,0,0" />
+
+                    <Button DockPanel.Dock="Right" PreviewMouseLeftButtonDown="ButtonSave_PreviewMouseLeftButtonDown">
+                        <Viewbox DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="15">
+                            <ContentControl Content="{StaticResource Save}"/>
+                        </Viewbox>
+                    </Button> 
 
                     <Grid>
                         <Grid.RowDefinitions>

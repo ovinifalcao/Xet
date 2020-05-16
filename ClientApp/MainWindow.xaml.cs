@@ -219,11 +219,10 @@ namespace ClientApp
 
                 if (LastMsg.Item2 == null)
                 {
-                    PlotBallon.txbMessageContent.Text = LastMsg.Item1;
+                    PlotBallon.pnBallonContent.Children.Add(BuildMessageWithEmojis(LastMsg.Item1));
                 }
                 else
                 {
-                    PlotBallon.pnBallonContent.Children.RemoveAt(0);
                     PlotBallon.pnBallonContent.Children.Add(new Image
                     {
                         Source = LastMsg.Item2,
@@ -312,8 +311,43 @@ namespace ClientApp
         }
 
 
+        public UIElement BuildMessageWithEmojis(string msg)
+        {
+            var AnaliseString = msg.Split(' ');
+            var wpn = new WrapPanel();
 
-        string StringFromRichTextBox(RichTextBox rtb)
+            foreach(string st in AnaliseString)
+            {
+                var lstCont = ControlMessage.RepresentacaoTextualDosEmojis.FirstOrDefault(n => st == n.Item1);
+                if (lstCont == null)
+                {
+                    var txbIntire = new TextBlock()
+                    {
+                        Text = st + " ",
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch
+                    };
+                    wpn.Children.Add(txbIntire);
+                }
+                else
+                {
+                    var canvas = new Viewbox()
+                    {
+                        Width = 20,
+                        Margin = new Thickness(2),
+                        Child = new ContentControl()
+                        {
+                            Content = this.Resources[lstCont.Item2]
+                        }
+                    };
+
+                    wpn.Children.Add(canvas);
+                }
+            }
+            return wpn;
+        }
+
+        private string StringFromRichTextBox(RichTextBox rtb)
         {
             TextRange textRange = new TextRange(
                 rtb.Document.ContentStart,
@@ -447,6 +481,11 @@ namespace ClientApp
                      });
 
             }
+        }
+
+        private void ButtonSave_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            FileOperations.SaveConversation(OpenedConversation.Conversation);
         }
     }
 }
