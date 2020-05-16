@@ -32,4 +32,42 @@
         </Path>
     </Canvas>
 
+    <Canvas x:Key="Group" Name="Layer_3" Width="24" Height="24">
+        <Canvas.RenderTransform>
+            <TranslateTransform X="0" Y="0"/>
+        </Canvas.RenderTransform>
+        <Canvas.Resources/>
+        <Canvas Name="g4">
+            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path5" Fill="#fff">
+                <Path.Data>
+                    <PathGeometry Figures="M9 9c0-1.7 1.3-3 3-3s3 1.3 3 3c0 1.7-1.3 3-3 3S9 10.7 9 9z M12 14c-4.6 0-6 3.3-6 3.3V19h12v-1.7C18 17.3 16.6 14 12 14z   " FillRule="NonZero"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+        <Canvas Name="g14">
+            <Canvas Name="g8">
+                <Ellipse xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Canvas.Left="16" Canvas.Top="6" Width="5" Height="5" Name="circle6" Fill="#fff"/>
+            </Canvas>
+            <Canvas Name="g12">
+                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path10" Fill="#fff">
+                    <Path.Data>
+                        <PathGeometry Figures="M18.5 13c-1.2 0-2.1 0.3-2.8 0.8c2.3 1.1 3.2 3 3.2 3.2l0 0.1H23v-1.3C23 15.7 21.9 13 18.5 13z" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Canvas>
+        <Canvas Name="g34">
+            <Canvas Name="g28">
+                <Ellipse xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Canvas.Left="3" Canvas.Top="6" Width="5" Height="5" Name="circle26" Fill="#fff"/>
+            </Canvas>
+            <Canvas Name="g32">
+                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path30" Fill="#fff">
+                    <Path.Data>
+                        <PathGeometry Figures="M5.5 13c1.2 0 2.1 0.3 2.8 0.8c-2.3 1.1-3.2 3-3.2 3.2l0 0.1H1v-1.3C1 15.7 2.1 13 5.5 13z" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Canvas>
+    </Canvas>
+
 </ResourceDictionary>

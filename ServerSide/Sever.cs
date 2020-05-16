@@ -14,7 +14,7 @@ namespace ServerSide
     {
         public static Dictionary<string, TcpClient> DicOfConnections = new Dictionary<string, TcpClient>();
         public static Dictionary<string, Byte[]> DicOfProfiles = new Dictionary<string, Byte[]>();
-        public static Dictionary<string, TcpClient> DicOfGroups = new Dictionary<string, TcpClient>();
+        public static Dictionary<string, List<string>> DicOfGroups = new Dictionary<string, List<string>>();
 
         private Thread listenerProcess;
         private TcpListener tcpClientListener;
@@ -118,12 +118,16 @@ namespace ServerSide
                         SendMessegeToTheAddressee(MessageObj);
                         break;
 
+                    case ComnModel.Actions.SetGroup:
+                        SetANewGroup(MessageObj);
+                        break;
+
                     case ComnModel.Actions.SendUserIsDisconnecting:
                         RemoveUser(MessageObj);
                         break;
 
-                    default:
-                        Console.WriteLine("Nada pra fazer");
+                    case ComnModel.Actions.SendTextGroup:
+                        SendMessegeToAGroupOfAddresses(MessageObj);
                         break;
                 }
             }
@@ -131,6 +135,44 @@ namespace ServerSide
             {
                 Console.WriteLine("Error: SendingMessage - " + ex.ToString());
             }  
+        }
+
+        private static void SendMessegeToAGroupOfAddresses(ComnModel messageObj)
+        {
+            var MsgToGroup = JsonConvert.DeserializeObject<ContentSendTextGroup>(messageObj.Content);
+
+            foreach (string st in DicOfGroups[MsgToGroup.GroupName])
+            {
+                if (st != MsgToGroup.Sender)
+                {
+                    SendMessegeToTheAddressee(new ComnModel()
+                    {
+                        Addresee = st,
+                        ContentAction = ComnModel.Actions.SendText,
+                        Moment = DateTime.Now,
+                        Content = JsonConvert.SerializeObject(
+                        new ContentSendText()
+                        {
+                            MessageContent = MsgToGroup.Message,
+                            SenderUserName = MsgToGroup.GroupName
+                        })
+                    });
+                }
+            }
+        }
+
+        private static void SetANewGroup(ComnModel messageObj)
+        {
+            var GroupInfo = JsonConvert.DeserializeObject<ContentSetGroup>(messageObj.Content);
+
+            DicOfGroups.Add(GroupInfo.GroupName, GroupInfo.ParticipantsNames);
+            foreach (string st in GroupInfo.ParticipantsNames)
+            {
+                messageObj.Addresee = st;
+                SendMessegeToTheAddressee(messageObj);
+            }
+
+
         }
 
         private static void SendMessegeToTheAddressee(ComnModel messageObj)
@@ -146,18 +188,6 @@ namespace ServerSide
         {
             throw new NotImplementedException();
         } 
-
-        private static void SendMesseToAGroup(ComnModel messageObj)
-        {
-            var tcpOnGroup = (from t in DicOfGroups
-                              where t.Key == messageObj.Addresee
-                              select t.Value).ToList();
-
-            foreach (TcpClient client in tcpOnGroup)
-            {
-                WriteMessageOnStream(client, JsonConvert.SerializeObject(messageObj));
-            }
-        }
 
         public static void WriteMessageOnStream(TcpClient tcpClient, string message)
         {

@@ -17,6 +17,7 @@ namespace ClientApp
     public partial class ConctactCard : UserControl
     {
         public Byte[] UserProfilePhoto { get; set; }
+        public string GroupContacts { get; set; }
 
         public enum ConversationSide
         {

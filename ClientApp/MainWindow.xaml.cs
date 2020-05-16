@@ -15,13 +15,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
 
-
-
 namespace ClientApp
 {
-    /// <summary>
-    /// Interação lógica para MainWindow.xam
-    /// </summary>
     public partial class MainWindow : Window
     {
         public ConctactCard OpenedConversation { get; private set; }
@@ -120,6 +115,40 @@ namespace ClientApp
             }
         }
 
+        public void RemoveContactCardToThePanel(ComnModel response)
+        {
+            var UserToRemove = JsonConvert.DeserializeObject<ContentSendUserIsDisconnecting>(response.Content);
+
+            for(int i = 0; i < pnContactCard.Children.Count; i++)
+            {
+                if (((ConctactCard)pnContactCard.Children[i]).txbContactName.Text == UserToRemove.Client)
+                {
+                    if (((ConctactCard)pnContactCard.Children[i]) == OpenedConversation)
+                        pnWindBottom.Visibility = Visibility.Hidden;
+
+                    pnContactCard.Children.RemoveAt(i);
+                    continue;
+                }                    
+            }
+        }
+
+        internal void AddNewGroupCardToThePanel(ComnModel response)
+        {
+            var NewGroupInfo = JsonConvert.DeserializeObject<ContentSetGroup>(response.Content);
+
+            var Card = new ConctactCard();
+            Card.PreviewMouseDown += ContactCard_Click;
+            Card.txbContactName.Text = NewGroupInfo.GroupName;
+
+            string ContactNames = "";
+            foreach (string st in NewGroupInfo.ParticipantsNames)
+            {
+                ContactNames += st + ", "; 
+            }
+            Card.GroupContacts = ContactNames.TrimEnd(new char[] { ',', ' ' });
+            pnContactCard.Children.Add(Card);
+
+        }
 
 
 
@@ -147,36 +176,66 @@ namespace ClientApp
 
         private void PerformSendMessage()
         {
-            var MessageContent = StringFromRichTextBox(txbTypeMessege).TrimEnd(new char[] { '\n', '\r' });
-            var Instant = DateTime.Now;
-
-            OpenedConversation.Conversation.Add(
-                new Tuple<string, DateTime, ConctactCard.ConversationSide>(
-                     MessageContent,
-                     Instant,
-                     ConctactCard.ConversationSide.host));
-
-            Controller.SendMessege(new ComnModel()
+            try
             {
-                Addresee = OpenedConversation.txbContactName.Text,
-                ContentAction = ComnModel.Actions.SendText,
-                Moment = Instant,
-                Content = JsonConvert.SerializeObject(
+                var MessageContent = StringFromRichTextBox(txbTypeMessege).TrimEnd(new char[] { '\n', '\r' });
+                if (string.IsNullOrEmpty(MessageContent)) return;
+
+                var Instant = DateTime.Now;
+
+                OpenedConversation.Conversation.Add(
+                    new Tuple<string, DateTime, ConctactCard.ConversationSide>(
+                         MessageContent,
+                         Instant,
+                         ConctactCard.ConversationSide.host));
+
+                var msg = new ComnModel()
+                {
+                    Addresee = OpenedConversation.txbContactName.Text,
+                    ContentAction = ComnModel.Actions.SendText,
+                    Moment = Instant
+                };
+
+                if (!string.IsNullOrEmpty(OpenedConversation.GroupContacts))
+                {
+                    msg.Content = JsonConvert.SerializeObject(
+                        new ContentSendTextGroup()
+                        {
+                            GroupName = OpenedConversation.txbContactName.Text,
+                            Message = string.Format("[{0}]: {1}", txbUserName.Text, MessageContent),
+                            Sender = txbUserName.Text
+                        });
+
+                    msg.ContentAction = ComnModel.Actions.SendTextGroup;
+                }
+                else
+                {
+                    msg.Content = JsonConvert.SerializeObject(
                     new ContentSendText()
                     {
                         MessageContent = MessageContent,
                         SenderUserName = txbUserName.Text
-                    })
-            });
+                    });
+                }
 
-            OpenedConversation.UpdateBrief(MessageContent);
-            AddNewMsgsToPanel(
-                 new List<Tuple<string, DateTime, ConctactCard.ConversationSide>>
-                 {
+                Controller.SendMessege(msg);
+
+                OpenedConversation.UpdateBrief(MessageContent);
+                AddNewMsgsToPanel(
+                     new List<Tuple<string, DateTime, ConctactCard.ConversationSide>>
+                     {
                         OpenedConversation.Conversation.Last()
-                 });
-            txbTypeMessege.Document.Blocks.Clear();
+                     });
+
+                txbTypeMessege.Document.Blocks.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Erro ao enviar Mensagem", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
+
 
         string StringFromRichTextBox(RichTextBox rtb)
         {
@@ -216,6 +275,13 @@ namespace ClientApp
                 });
             }
 
+
+            txbGroupInfo.Text = null;
+            if (!string.IsNullOrEmpty(OpenedConversation.GroupContacts))
+            {
+                txbGroupInfo.Text = OpenedConversation.GroupContacts;
+            }
+
         }
 
         private void TxbTypeMessege_KeyDown(object sender, KeyEventArgs e)
@@ -223,6 +289,39 @@ namespace ClientApp
             if (e.Key == Key.Enter)
             {
                 PerformSendMessage();
+            }
+        }
+
+        private void ButtonGroup_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var WdSelectUsers = new SelectUsers(pnContactCard.Children.Cast<ConctactCard>().ToList());
+                WdSelectUsers.ShowDialog();
+
+                if (string.IsNullOrEmpty(WdSelectUsers.txbGroupName.Text)) throw new Exception("Não é possível adicionar um gropo sem nome");
+
+                var UserGroups = WdSelectUsers.GetAllSelected();
+                UserGroups.Add(txbUserName.Text);
+
+                if (UserGroups.Count < 3) throw new Exception("Não é possível iniciar um grupo de conversa com menos de dois contatos");
+            
+                Controller.SendMessege(new ComnModel()
+                {
+                    Addresee = null,
+                    Moment = DateTime.Now,
+                    ContentAction = ComnModel.Actions.SetGroup,
+                    Content = JsonConvert.SerializeObject(
+                        new ContentSetGroup()
+                        {
+                            GroupName = WdSelectUsers.txbGroupName.Text,
+                            ParticipantsNames = UserGroups
+                        })
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Erro em criar grupo", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

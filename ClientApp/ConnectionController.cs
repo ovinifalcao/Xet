@@ -125,7 +125,7 @@ namespace ClientApp
                     break;
 
                 case ComnModel.Actions.SetGroup:
-                    //configura um grupo no contexto;
+                    WdMensseger.Dispatcher.Invoke(new ActionBetweenThreads(WdMensseger.AddNewGroupCardToThePanel), (new List<object>() { objComm }).ToArray());
                     break;
 
                 case ComnModel.Actions.SendConnectionSuccessful:
@@ -138,6 +138,10 @@ namespace ClientApp
 
                 case ComnModel.Actions.SendUsersAlreadyLogged:
                     WdMensseger.Dispatcher.Invoke(new ActionBetweenThreads(WdMensseger.AddAlreadyLoggedContactCardToThePanel), (new List<object>() { objComm }).ToArray());
+                    break;
+
+                case ComnModel.Actions.SendUserIsDisconnecting:
+                    WdMensseger.Dispatcher.Invoke(new ActionBetweenThreads(WdMensseger.RemoveContactCardToThePanel), (new List<object>() { objComm }).ToArray());
                     break;
 
             }
