@@ -93,7 +93,7 @@
                 </Grid.ColumnDefinitions>
 
                 <RichTextBox Name="txbTypeMessege" KeyUp="TxbTypeMessege_KeyDown" Grid.Column="0"/>
-                <Button Grid.Column="1" >
+                <Button Grid.Column="1" Click="ButtonAenxo_Click">
                     <Viewbox Name="ArrowBox" DockPanel.Dock="Right" HorizontalAlignment="Right"  Margin="7">
                         <ContentControl Content="{StaticResource Clip}"/>
                     </Viewbox>

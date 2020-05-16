@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="400">
     <Border Background="#96FFFFFF" BorderBrush="Transparent" BorderThickness="1,1,1,1" CornerRadius="10,10,10,10">
-        <Grid >
+        <Grid Name="pnBallonContent" >
             <TextBlock Name="txbMessageContent" TextWrapping="Wrap" Margin="20,5,20,5"></TextBlock>
         </Grid>
     </Border>

@@ -118,6 +118,14 @@ namespace ServerSide
                         SendMessegeToTheAddressee(MessageObj);
                         break;
 
+                    case ComnModel.Actions.SendImage:
+                        SendMessegeToTheAddressee(MessageObj);
+                        break;
+
+                    case ComnModel.Actions.SendImageGroup:
+                        SendImageAsAMessageToAGroup(MessageObj);
+                        break;
+
                     case ComnModel.Actions.SetGroup:
                         SetANewGroup(MessageObj);
                         break;
@@ -135,6 +143,17 @@ namespace ServerSide
             {
                 Console.WriteLine("Error: SendingMessage - " + ex.ToString());
             }  
+        }
+
+        private static void SendImageAsAMessageToAGroup(ComnModel messageObj)
+        {
+            var InfoOfImgSend = JsonConvert.DeserializeObject<ContentSendImage>(messageObj.Content);
+
+            foreach (string st in DicOfGroups[messageObj.Addresee])
+            {
+                if(st != InfoOfImgSend.SenderUserName)
+                    WriteMessageOnStream(DicOfConnections[st], JsonConvert.SerializeObject(messageObj));
+            }
         }
 
         private static void SendMessegeToAGroupOfAddresses(ComnModel messageObj)

@@ -62,6 +62,10 @@ namespace ClientApp
 
         private void WdMensseger_Closed(object sender, EventArgs e)
         {
+            var UserGroups = (from Cd in WdMensseger.pnContactCard.Children.Cast<ConctactCard>()
+                              where !string.IsNullOrEmpty(Cd.GroupContacts)
+                              select Cd.txbContactName.Text).ToList();
+
             isConnected = false;
             SendMessege(
                 new ComnModel()
@@ -72,7 +76,8 @@ namespace ClientApp
                     Content = JsonConvert.SerializeObject(
                         new ContentSendUserIsDisconnecting()
                         {
-                            Client = UserName
+                            Client = UserName,
+                            GroupsWithTheUSer = UserGroups
                         })
                 });
 
@@ -109,19 +114,14 @@ namespace ClientApp
             {
                 case ComnModel.Actions.SendText:
                     WdMensseger.Dispatcher.Invoke(new ActionBetweenThreads(WdMensseger.UpdateReceivedMessages), (new List<object>() { objComm }).ToArray());
-
                     break;
 
                 case ComnModel.Actions.SendImage:
-                    //Atulizar o form pai com uma mensagem contento uma imagem
-                    break;
-
-                case ComnModel.Actions.SendTextGroup:
-                    //atulizar o form pai com nova mensagem de grupo
+                    WdMensseger.Dispatcher.Invoke(new ActionBetweenThreads(WdMensseger.UpdateReceivedMessagesWithAnImage), (new List<object>() { objComm }).ToArray());
                     break;
 
                 case ComnModel.Actions.SendImageGroup:
-                    //atulizar o fom pai com uma mensagem contendo uma imagem para um grupo
+                    WdMensseger.Dispatcher.Invoke(new ActionBetweenThreads(WdMensseger.UpdateReceivedMessagesWithAnImage), (new List<object>() { objComm }).ToArray());
                     break;
 
                 case ComnModel.Actions.SetGroup:

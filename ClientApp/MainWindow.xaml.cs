@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
+using Microsoft.Win32;
 
 namespace ClientApp
 {
@@ -26,6 +27,8 @@ namespace ClientApp
         {
             InitializeComponent();
         }
+
+
 
         public void ChangeClientDisplayedName(ComnModel response)
         { 
@@ -95,11 +98,12 @@ namespace ClientApp
                 .FirstOrDefault(c => c.txbContactName.Text == TextContent.SenderUserName);
 
             CardOfSenderUser.Conversation.Add(
-                new Tuple<string, DateTime, ConctactCard.ConversationSide>
+                new Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>
                 (
                     TextContent.MessageContent,
+                    null,
                     response.Moment,
-                     ConctactCard.ConversationSide.Contact
+                    ConctactCard.ConversationSide.Contact
                 ));
             CardOfSenderUser.UpdateBrief(TextContent.MessageContent);
     
@@ -108,9 +112,43 @@ namespace ClientApp
             if (OpenedConversation != null && CardOfSenderUser == OpenedConversation)
             {
                 AddNewMsgsToPanel(
-                    new List<Tuple<string, DateTime, ConctactCard.ConversationSide>>
+                    new List<Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>>
                     {
                     OpenedConversation.Conversation.Last()
+                    });
+            }
+        }
+
+        public void UpdateReceivedMessagesWithAnImage(ComnModel response)
+        {
+            var TextContent = JsonConvert.DeserializeObject<ContentSendImage>(response.Content);
+
+            var CardToFind = TextContent.SenderUserName;
+
+            if (response.ContentAction == ComnModel.Actions.SendImageGroup) CardToFind = TextContent.AddresseeName;
+
+            var CardOfSenderUser = pnContactCard.Children.Cast<ConctactCard>()
+                .FirstOrDefault(c => c.txbContactName.Text == CardToFind);
+
+            CardOfSenderUser.Conversation.Add(
+                new Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>
+                (
+                    null,
+                    FileOperations.RecoverImgFromArr(TextContent.ByteImage),
+                    response.Moment,
+                    ConctactCard.ConversationSide.Contact
+                ));
+
+            CardOfSenderUser.UpdateBrief("Imagem");
+
+            CardOfSenderUser.elNewMsgWarning.Visibility = Visibility.Visible;
+
+            if (OpenedConversation != null && CardOfSenderUser == OpenedConversation)
+            {
+                AddNewMsgsToPanel(
+                    new List<Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>>
+                    {
+                        OpenedConversation.Conversation.Last()
                     });
             }
         }
@@ -119,20 +157,40 @@ namespace ClientApp
         {
             var UserToRemove = JsonConvert.DeserializeObject<ContentSendUserIsDisconnecting>(response.Content);
 
-            for(int i = 0; i < pnContactCard.Children.Count; i++)
-            {
-                if (((ConctactCard)pnContactCard.Children[i]).txbContactName.Text == UserToRemove.Client)
-                {
-                    if (((ConctactCard)pnContactCard.Children[i]) == OpenedConversation)
-                        pnWindBottom.Visibility = Visibility.Hidden;
+            UserToRemove.GroupsWithTheUSer.Add(UserToRemove.Client);
 
-                    pnContactCard.Children.RemoveAt(i);
-                    continue;
-                }                    
+            var ItensToRemove = (from cd in pnContactCard.Children.Cast<ConctactCard>()
+                                 join lst in UserToRemove.GroupsWithTheUSer
+                                 on cd.txbContactName.Text equals lst
+                                 select cd).ToList();
+
+            foreach (ConctactCard Cr in ItensToRemove)
+            {
+                if (Cr == OpenedConversation)
+                {
+                    OpenedConversation.Conversation.Add(
+                    new Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>
+                    (
+                        string.Format("A conversa foi terminada, pois {0} saiu.", UserToRemove.Client),
+                        null,
+                        response.Moment,
+                        ConctactCard.ConversationSide.Contact
+                    ));
+
+                    AddNewMsgsToPanel(
+                    new List<Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>>
+                    {
+                        OpenedConversation.Conversation.Last()
+                    });
+
+                    pnWindBottom.Visibility = Visibility.Hidden;
+                }
+                pnContactCard.Children.Remove(Cr);
             }
+
         }
 
-        internal void AddNewGroupCardToThePanel(ComnModel response)
+        public void AddNewGroupCardToThePanel(ComnModel response)
         {
             var NewGroupInfo = JsonConvert.DeserializeObject<ContentSetGroup>(response.Content);
 
@@ -153,16 +211,33 @@ namespace ClientApp
 
 
 
-        private void AddNewMsgsToPanel(List<Tuple<string, DateTime, ConctactCard.ConversationSide>> MsgdsToAdd  )
+        private void AddNewMsgsToPanel(List<Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>> MsgdsToAdd  )
         {
-            foreach (Tuple<string, DateTime, ConctactCard.ConversationSide> LastMsg in MsgdsToAdd)
+            foreach (Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide> LastMsg in MsgdsToAdd)
             {
                 var PlotBallon = new ControlMessage();
-                PlotBallon.txbMessageContent.Text = LastMsg.Item1;
+
+                if (LastMsg.Item2 == null)
+                {
+                    PlotBallon.txbMessageContent.Text = LastMsg.Item1;
+                }
+                else
+                {
+                    PlotBallon.pnBallonContent.Children.RemoveAt(0);
+                    PlotBallon.pnBallonContent.Children.Add(new Image
+                    {
+                        Source = LastMsg.Item2,
+                        MaxHeight = 300,
+                        Height = 400,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        HorizontalAlignment = HorizontalAlignment.Stretch
+                    });
+                }
+
                 PlotBallon.Margin = new Thickness(5);
                 PlotBallon.HorizontalAlignment = HorizontalAlignment.Right;
 
-                if (LastMsg.Item3 == ConctactCard.ConversationSide.Contact)
+                if (LastMsg.Item4 == ConctactCard.ConversationSide.Contact)
                     PlotBallon.HorizontalAlignment = HorizontalAlignment.Left;
 
                 pnMessagePlot.Children.Add(PlotBallon);
@@ -184,8 +259,9 @@ namespace ClientApp
                 var Instant = DateTime.Now;
 
                 OpenedConversation.Conversation.Add(
-                    new Tuple<string, DateTime, ConctactCard.ConversationSide>(
+                    new Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>(
                          MessageContent,
+                         null,
                          Instant,
                          ConctactCard.ConversationSide.host));
 
@@ -222,7 +298,7 @@ namespace ClientApp
 
                 OpenedConversation.UpdateBrief(MessageContent);
                 AddNewMsgsToPanel(
-                     new List<Tuple<string, DateTime, ConctactCard.ConversationSide>>
+                     new List<Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>>
                      {
                         OpenedConversation.Conversation.Last()
                      });
@@ -322,6 +398,54 @@ namespace ClientApp
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Erro em criar grupo", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ButtonAenxo_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            openFileDialog.InitialDirectory = "c:\\";
+            openFileDialog.Filter = "Image Files (*.jpg)|*.jpg| (*.png*)|*.png*";
+            openFileDialog.RestoreDirectory = true;
+
+            
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var ByteImg = FileOperations.BuildImgArr(openFileDialog.FileName);
+                var msg = new ComnModel()
+                {
+                    Addresee = OpenedConversation.txbContactName.Text,
+                    ContentAction = ComnModel.Actions.SendImage,
+                    Moment = DateTime.Now,
+                    Content = JsonConvert.SerializeObject(
+                    new ContentSendImage()
+                    {
+                        ByteImage = ByteImg,
+                        AddresseeName = OpenedConversation.txbContactName.Text,
+                        SenderUserName = txbUserName.Text
+                    })
+                };
+
+                if (!string.IsNullOrEmpty(OpenedConversation.GroupContacts)) msg.ContentAction = ComnModel.Actions.SendImageGroup;
+                Controller.SendMessege(msg);
+
+
+                OpenedConversation.Conversation.Add(
+                new Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>(
+                     null,
+                     FileOperations.RecoverImgFromArr(ByteImg),
+                     DateTime.Now,
+                     ConctactCard.ConversationSide.host));
+
+                OpenedConversation.UpdateBrief("Imagem");
+
+                AddNewMsgsToPanel(
+                     new List<Tuple<string, BitmapImage, DateTime, ConctactCard.ConversationSide>>
+                     {
+                        OpenedConversation.Conversation.Last()
+                     });
+
             }
         }
     }

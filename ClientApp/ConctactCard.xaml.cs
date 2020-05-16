@@ -25,12 +25,12 @@ namespace ClientApp
             Contact = 1
         }
 
-        public List<Tuple<string, DateTime, ConversationSide>> Conversation { get; set; }
+        public List<Tuple<string, BitmapImage, DateTime, ConversationSide>> Conversation { get; set; }
 
         public ConctactCard()
         {
             InitializeComponent();
-            Conversation = new List<Tuple<string, DateTime, ConversationSide>>();
+            Conversation = new List<Tuple<string, BitmapImage, DateTime, ConversationSide>>();
         }
 
         internal void UpdateBrief(string briefMsg)
